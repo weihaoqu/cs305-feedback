@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CS305 Demo Day Feedback</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+            background: #f5f5f7;
+            color: #1d1d1f;
+            line-height: 1.6;
+            padding: 16px;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: #fff;
+            border-radius: 16px;
+            padding: 32px 24px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+        }
+        @media (max-width: 400px) {
+            .container { padding: 24px 16px; }
+        }
+        h1 {
+            font-size: 22px;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 4px;
+        }
+        .subtitle {
+            text-align: center;
+            color: #636366;
+            font-size: 13px;
+            margin-bottom: 24px;
+        }
+        .divider {
+            height: 1px;
+            background: #e5e5e7;
+            margin: 24px 0;
+        }
+
+        /* ===== HUB (group selector) ===== */
+        .hub-intro {
+            text-align: center;
+            font-size: 14px;
+            color: #3a3a3c;
+            margin-bottom: 20px;
+        }
+        .group-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        @media (max-width: 360px) {
+            .group-grid { grid-template-columns: repeat(3, 1fr); gap: 8px; }
+        }
+        .group-card {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 16px 8px;
+            border: 2px solid #e5e5e7;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.15s;
+            text-decoration: none;
+            color: #1d1d1f;
+        }
+        .group-card:hover {
+            border-color: #007aff;
+            background: #f0f7ff;
+        }
+        .group-card .group-num {
+            font-size: 24px;
+            font-weight: 700;
+        }
+        .group-card .group-label {
+            font-size: 11px;
+            color: #636366;
+        }
+        .group-card.done {
+            border-color: #34c759;
+            background: #f0fff4;
+        }
+        .group-card.done .group-label {
+            color: #34c759;
+        }
+        .hub-note {
+            text-align: center;
+            font-size: 12px;
+            color: #636366;
+        }
+
+        /* ===== FEEDBACK FORM ===== */
+        .group-badge {
+            display: block;
+            text-align: center;
+            margin: 8px auto 20px;
+            background: #007aff;
+            color: #fff;
+            font-size: 18px;
+            font-weight: 700;
+            padding: 8px 24px;
+            border-radius: 20px;
+            width: fit-content;
+        }
+        .back-link {
+            display: block;
+            text-align: center;
+            margin-bottom: 16px;
+            font-size: 14px;
+            color: #007aff;
+            text-decoration: none;
+        }
+        .back-link:hover { text-decoration: underline; }
+        fieldset {
+            border: none;
+            padding: 0;
+            margin: 0 0 28px;
+        }
+        legend {
+            font-size: 15px;
+            font-weight: 600;
+            margin-bottom: 12px;
+            padding: 0;
+        }
+        .rating-scale {
+            display: flex;
+            justify-content: space-between;
+            gap: 4px;
+            margin-top: 8px;
+        }
+        @media (max-width: 360px) {
+            .rating-scale { gap: 2px; }
+        }
+        .rating-option {
+            flex: 1;
+            text-align: center;
+        }
+        .rating-option input[type="radio"] {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0,0,0,0);
+            border: 0;
+        }
+        .rating-option label {
+            display: block;
+            padding: 12px 4px;
+            border: 2px solid #e5e5e7;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.15s;
+            font-size: 14px;
+        }
+        .rating-option label .number {
+            display: block;
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 2px;
+        }
+        .rating-option label .label-text {
+            display: block;
+            font-size: 10px;
+            color: #636366;
+            line-height: 1.2;
+        }
+        .rating-option input[type="radio"]:checked + label {
+            border-color: #007aff;
+            background: #f0f7ff;
+            color: #007aff;
+        }
+        .rating-option input[type="radio"]:checked + label .label-text {
+            color: #007aff;
+        }
+        .rating-option input[type="radio"]:focus-visible + label {
+            outline: 2px solid #007aff;
+            outline-offset: 2px;
+        }
+        .question {
+            margin-bottom: 28px;
+        }
+        .question label {
+            display: block;
+            font-size: 15px;
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+        textarea {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e5e5e7;
+            border-radius: 10px;
+            font-size: 15px;
+            font-family: inherit;
+            line-height: 1.5;
+            resize: vertical;
+            min-height: 80px;
+            transition: border-color 0.15s;
+        }
+        textarea:focus {
+            border-color: #007aff;
+            outline: 2px solid transparent;
+        }
+        textarea:focus-visible {
+            outline: 2px solid #007aff;
+            outline-offset: 2px;
+        }
+        textarea::placeholder { color: #c7c7cc; }
+        .btn {
+            display: block;
+            width: 100%;
+            padding: 14px;
+            background: #007aff;
+            color: #fff;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 8px;
+            transition: background 0.2s;
+        }
+        .btn:hover { background: #0063d1; }
+        .btn:disabled {
+            background: #c7c7cc;
+            cursor: not-allowed;
+        }
+        .note {
+            text-align: center;
+            font-size: 12px;
+            color: #636366;
+            margin-top: 16px;
+        }
+        .error-msg {
+            display: none;
+            background: #fff2f2;
+            color: #d70015;
+            padding: 12px 16px;
+            border-radius: 8px;
+            font-size: 14px;
+            margin-top: 12px;
+        }
+
+        /* ===== SUCCESS ===== */
+        .success {
+            display: none;
+            text-align: center;
+            padding: 40px 20px;
+        }
+        .success .checkmark {
+            font-size: 48px;
+            color: #34c759;
+            margin-bottom: 16px;
+        }
+        .success h2 {
+            font-size: 20px;
+            margin-bottom: 8px;
+        }
+        .success p {
+            color: #636366;
+            font-size: 15px;
+            margin-bottom: 20px;
+        }
+        .success .btn-back {
+            display: inline-block;
+            padding: 12px 28px;
+            background: #007aff;
+            color: #fff;
+            border: none;
+            border-radius: 10px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 15px;
+            cursor: pointer;
+        }
+        .success .btn-back:hover { background: #0063d1; }
+    </style>
+</head>
+<body>
+
+    <!-- ===== SCREEN 1: GROUP SELECTOR HUB ===== -->
+    <div class="container" id="hub-screen" style="display:none;">
+        <h1>CS305 Demo Day Feedback</h1>
+        <p class="subtitle">Tap a group to give feedback after trying their game/app.</p>
+
+        <div class="group-grid" id="group-grid"></div>
+
+        <p class="hub-note">Green = feedback submitted. You can submit for the same group again if needed.</p>
+    </div>
+
+    <!-- ===== SCREEN 2: FEEDBACK FORM ===== -->
+    <div class="container" id="feedback-form" style="display:none;">
+        <a href="feedback.html" class="back-link" id="back-link">&larr; All Groups</a>
+        <h1>Player Feedback</h1>
+        <div class="group-badge" id="group-badge">Group —</div>
+        <p class="subtitle">Your responses are anonymous but may be used as part of the project's peer score. Please evaluate the game/app itself, not the presenters.</p>
+
+        <form id="feedback-form-el" novalidate>
+            <fieldset>
+                <legend>1. Before trying this game/app, how would you rate your understanding of this topic?</legend>
+                <div class="rating-scale">
+                    <div class="rating-option"><input type="radio" name="pre" id="pre1" value="1"><label for="pre1"><span class="number">1</span><span class="label-text">None</span></label></div>
+                    <div class="rating-option"><input type="radio" name="pre" id="pre2" value="2"><label for="pre2"><span class="number">2</span><span class="label-text">Limited</span></label></div>
+                    <div class="rating-option"><input type="radio" name="pre" id="pre3" value="3"><label for="pre3"><span class="number">3</span><span class="label-text">Basic</span></label></div>
+                    <div class="rating-option"><input type="radio" name="pre" id="pre4" value="4"><label for="pre4"><span class="number">4</span><span class="label-text">Good</span></label></div>
+                    <div class="rating-option"><input type="radio" name="pre" id="pre5" value="5"><label for="pre5"><span class="number">5</span><span class="label-text">Strong</span></label></div>
+                </div>
+            </fieldset>
+
+            <fieldset>
+                <legend>2. After trying this game/app, how would you rate your understanding of this topic?</legend>
+                <div class="rating-scale">
+                    <div class="rating-option"><input type="radio" name="post" id="post1" value="1"><label for="post1"><span class="number">1</span><span class="label-text">None</span></label></div>
+                    <div class="rating-option"><input type="radio" name="post" id="post2" value="2"><label for="post2"><span class="number">2</span><span class="label-text">Limited</span></label></div>
+                    <div class="rating-option"><input type="radio" name="post" id="post3" value="3"><label for="post3"><span class="number">3</span><span class="label-text">Basic</span></label></div>
+                    <div class="rating-option"><input type="radio" name="post" id="post4" value="4"><label for="post4"><span class="number">4</span><span class="label-text">Good</span></label></div>
+                    <div class="rating-option"><input type="radio" name="post" id="post5" value="5"><label for="post5"><span class="number">5</span><span class="label-text">Strong</span></label></div>
+                </div>
+            </fieldset>
+
+            <div class="divider"></div>
+
+            <fieldset>
+                <legend>3. How well did the game/app help you understand or practice the CS concept?</legend>
+                <div class="rating-scale">
+                    <div class="rating-option"><input type="radio" name="learning" id="learn1" value="1"><label for="learn1"><span class="number">1</span><span class="label-text">Not at all</span></label></div>
+                    <div class="rating-option"><input type="radio" name="learning" id="learn2" value="2"><label for="learn2"><span class="number">2</span><span class="label-text">A little</span></label></div>
+                    <div class="rating-option"><input type="radio" name="learning" id="learn3" value="3"><label for="learn3"><span class="number">3</span><span class="label-text">Somewhat</span></label></div>
+                    <div class="rating-option"><input type="radio" name="learning" id="learn4" value="4"><label for="learn4"><span class="number">4</span><span class="label-text">Well</span></label></div>
+                    <div class="rating-option"><input type="radio" name="learning" id="learn5" value="5"><label for="learn5"><span class="number">5</span><span class="label-text">Very well</span></label></div>
+                </div>
+            </fieldset>
+
+            <fieldset>
+                <legend>4. How accurate did the CS content seem?</legend>
+                <div class="rating-scale">
+                    <div class="rating-option"><input type="radio" name="accuracy" id="acc1" value="1"><label for="acc1"><span class="number">1</span><span class="label-text">Inaccurate</span></label></div>
+                    <div class="rating-option"><input type="radio" name="accuracy" id="acc2" value="2"><label for="acc2"><span class="number">2</span><span class="label-text">Some errors</span></label></div>
+                    <div class="rating-option"><input type="radio" name="accuracy" id="acc3" value="3"><label for="acc3"><span class="number">3</span><span class="label-text">Mostly ok</span></label></div>
+                    <div class="rating-option"><input type="radio" name="accuracy" id="acc4" value="4"><label for="acc4"><span class="number">4</span><span class="label-text">Accurate</span></label></div>
+                    <div class="rating-option"><input type="radio" name="accuracy" id="acc5" value="5"><label for="acc5"><span class="number">5</span><span class="label-text">Very accurate</span></label></div>
+                </div>
+            </fieldset>
+
+            <fieldset>
+                <legend>5. How easy to use and engaging was the game/app?</legend>
+                <div class="rating-scale">
+                    <div class="rating-option"><input type="radio" name="usability" id="use1" value="1"><label for="use1"><span class="number">1</span><span class="label-text">Poor</span></label></div>
+                    <div class="rating-option"><input type="radio" name="usability" id="use2" value="2"><label for="use2"><span class="number">2</span><span class="label-text">Fair</span></label></div>
+                    <div class="rating-option"><input type="radio" name="usability" id="use3" value="3"><label for="use3"><span class="number">3</span><span class="label-text">Ok</span></label></div>
+                    <div class="rating-option"><input type="radio" name="usability" id="use4" value="4"><label for="use4"><span class="number">4</span><span class="label-text">Good</span></label></div>
+                    <div class="rating-option"><input type="radio" name="usability" id="use5" value="5"><label for="use5"><span class="number">5</span><span class="label-text">Excellent</span></label></div>
+                </div>
+            </fieldset>
+
+            <div class="divider"></div>
+
+            <div class="question">
+                <label for="comments">6. What helped you learn, and what could be improved? <span style="color:#d70015;">*</span></label>
+                <textarea id="comments" maxlength="2000" required placeholder="Write a few sentences about what worked and what could be better."></textarea>
+            </div>
+
+            <button type="submit" class="btn" id="submit-btn">Submit Feedback</button>
+            <div class="error-msg" id="error-msg" role="alert"></div>
+            <p class="note">Your responses are anonymous. <span style="color:#d70015;">*</span> = required.</p>
+        </form>
+    </div>
+
+    <!-- ===== SCREEN 3: SUCCESS ===== -->
+    <div class="container success" id="success-screen" role="status" aria-live="polite" tabindex="-1">
+        <div class="checkmark" aria-hidden="true">&#10003;</div>
+        <h2>Feedback submitted!</h2>
+        <p id="success-msg">Thank you.</p>
+        <a href="feedback.html" class="btn-back" id="back-to-hub">Back to All Groups</a>
+    </div>
+
+    <script>
+        const APPS_SCRIPT_URL = 'YOUR_APPS_SCRIPT_URL_HERE';
+        const TOTAL_GROUPS = 15;
+
+        // Track submitted groups in sessionStorage
+        function getSubmitted() {
+            try {
+                return JSON.parse(sessionStorage.getItem('cs305_submitted') || '[]');
+            } catch { return []; }
+        }
+        function markSubmitted(g) {
+            try {
+                const list = getSubmitted();
+                if (!list.includes(g)) list.push(g);
+                sessionStorage.setItem('cs305_submitted', JSON.stringify(list));
+            } catch (e) { /* private browsing or storage full */ }
+        }
+
+        // Parse group from URL
+        function getGroupParam() {
+            const params = new URLSearchParams(window.location.search);
+            const g = params.get('group');
+            if (g !== null) return g;
+            const match = decodeURIComponent(window.location.href).match(/[?&]group=([^&#]*)/);
+            return match ? match[1] : null;
+        }
+
+        const groupRaw = getGroupParam();
+        const validGroup = groupRaw !== null && /^(?:[1-9]|1[0-5])$/.test(groupRaw);
+        const group = validGroup ? parseInt(groupRaw, 10) : null;
+
+        if (group) {
+            // ===== SHOW FEEDBACK FORM =====
+            document.getElementById('feedback-form').style.display = 'block';
+            document.getElementById('group-badge').textContent = 'Group ' + group;
+            document.title = 'CS305 Feedback — Group ' + group;
+        } else {
+            // ===== SHOW GROUP SELECTOR HUB =====
+            document.getElementById('hub-screen').style.display = 'block';
+            buildGroupGrid();
+        }
+
+        function buildGroupGrid() {
+            const grid = document.getElementById('group-grid');
+            grid.innerHTML = '';
+            const submitted = getSubmitted();
+
+            for (let i = 1; i <= TOTAL_GROUPS; i++) {
+                const card = document.createElement('a');
+                card.href = 'feedback.html?group=' + i;
+                card.className = 'group-card' + (submitted.includes(i) ? ' done' : '');
+                var isDone = submitted.includes(i);
+                card.setAttribute('aria-label', 'Group ' + i + (isDone ? ', submitted' : ''));
+                card.innerHTML =
+                    '<span class="group-num">' + i + '</span>' +
+                    '<span class="group-label">' + (isDone ? 'Submitted' : 'Group') + '</span>';
+                grid.appendChild(card);
+            }
+        }
+
+        // ===== FORM SUBMISSION =====
+        document.getElementById('feedback-form-el').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const btn = document.getElementById('submit-btn');
+            const errorMsg = document.getElementById('error-msg');
+            errorMsg.style.display = 'none';
+
+            const commentsEl = document.getElementById('comments');
+            if (!commentsEl.value.trim()) {
+                commentsEl.focus();
+                errorMsg.textContent = 'Please fill in question 6 before submitting.';
+                errorMsg.style.display = 'block';
+                return;
+            }
+
+            const val = function(name) {
+                const el = document.querySelector('input[name="' + name + '"]:checked');
+                return el ? el.value : '';
+            };
+
+            const data = {
+                type: 'feedback',
+                timestamp: new Date().toISOString(),
+                group: group,
+                pre_rating: val('pre'),
+                post_rating: val('post'),
+                learning: val('learning'),
+                accuracy: val('accuracy'),
+                usability: val('usability'),
+                comments: document.getElementById('comments').value.trim()
+            };
+
+            btn.disabled = true;
+            btn.textContent = 'Submitting...';
+
+            const isPlaceholder = APPS_SCRIPT_URL === 'YOUR_APPS_SCRIPT_URL_HERE';
+
+            try {
+                if (!isPlaceholder) {
+                    const resp = await fetch(APPS_SCRIPT_URL, {
+                        method: 'POST',
+                        redirect: 'follow',
+                        headers: { 'Content-Type': 'text/plain' },
+                        body: JSON.stringify(data)
+                    });
+                    if (!resp.ok) throw new Error('Server returned ' + resp.status);
+                    const result = await resp.json();
+                    if (result.status !== 'ok') throw new Error(result.message || 'Server error');
+                }
+
+                markSubmitted(group);
+                document.getElementById('feedback-form').style.display = 'none';
+                document.getElementById('success-msg').textContent =
+                    'Group ' + group + ' feedback recorded. Returning to groups...';
+                const success = document.getElementById('success-screen');
+                success.style.display = 'block';
+                success.focus();
+                setTimeout(function() {
+                    window.location.replace('feedback.html');
+                }, 1500);
+            } catch (err) {
+                errorMsg.textContent = 'Something went wrong. Please try again. If the problem persists, let the instructor know.';
+                errorMsg.style.display = 'block';
+                btn.disabled = false;
+                btn.textContent = 'Submit Feedback';
+            }
+        });
+    </script>
+</body>
+</html>

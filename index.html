@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CS305 Research Study — Consent</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+            background: #f5f5f7;
+            color: #1d1d1f;
+            line-height: 1.6;
+            padding: 16px;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: #fff;
+            border-radius: 16px;
+            padding: 32px 24px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+        }
+        @media (max-width: 400px) {
+            .container { padding: 24px 16px; }
+        }
+        h1 {
+            font-size: 22px;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 4px;
+        }
+        .subtitle {
+            text-align: center;
+            color: #636366;
+            font-size: 14px;
+            margin-bottom: 24px;
+        }
+        .divider {
+            height: 1px;
+            background: #e5e5e7;
+            margin: 20px 0;
+        }
+        p, li {
+            font-size: 14px;
+            color: #3a3a3c;
+            margin-bottom: 8px;
+        }
+        .highlight {
+            background: #f0f7ff;
+            border-left: 3px solid #007aff;
+            padding: 12px 16px;
+            border-radius: 0 8px 8px 0;
+            margin: 16px 0;
+        }
+        .highlight p {
+            margin: 0;
+            font-weight: 500;
+            color: #1d1d1f;
+        }
+        .consent-box {
+            background: #fafafa;
+            border: 1px solid #e5e5e7;
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .consent-box h2 {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+        .checkbox-row {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+        }
+        .checkbox-row input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            margin-top: 2px;
+            flex-shrink: 0;
+            accent-color: #007aff;
+        }
+        .checkbox-row label {
+            font-size: 14px;
+            color: #1d1d1f;
+            cursor: pointer;
+        }
+        .meta {
+            font-size: 13px;
+            color: #636366;
+        }
+        .meta a {
+            color: #007aff;
+        }
+        .btn {
+            display: block;
+            width: 100%;
+            padding: 14px;
+            background: #007aff;
+            color: #fff;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: background 0.2s;
+        }
+        .btn:hover { background: #0063d1; }
+        .btn:disabled {
+            background: #c7c7cc;
+            cursor: not-allowed;
+        }
+        .success {
+            display: none;
+            text-align: center;
+            padding: 40px 20px;
+        }
+        .success .checkmark {
+            font-size: 48px;
+            margin-bottom: 16px;
+        }
+        .success h2 {
+            font-size: 20px;
+            margin-bottom: 8px;
+        }
+        .success p {
+            color: #636366;
+            font-size: 15px;
+        }
+        .error-msg {
+            display: none;
+            background: #fff2f2;
+            color: #d70015;
+            padding: 12px 16px;
+            border-radius: 8px;
+            font-size: 14px;
+            margin-top: 12px;
+        }
+        .error-msg.preview {
+            background: #f5f5f7;
+            color: #636366;
+        }
+    </style>
+</head>
+<body>
+    <div class="container" id="consent-form">
+        <h1>Research Study Consent</h1>
+        <p class="subtitle">CS305 Advanced Computing — Demo Day</p>
+
+        <div class="divider"></div>
+
+        <p>You are being asked to participate in a research study on how AI tools can improve learning in higher education. After trying each group's game/app, you'll fill out a brief feedback form (~1–2 min).</p>
+
+        <div class="highlight">
+            <p>Participation is voluntary, anonymous, and has no effect on your grade. Responses will not be read until after final grades are submitted.</p>
+        </div>
+
+        <p class="meta">PI: Weihao Qu (<a href="mailto:wqu@monmouth.edu">wqu@monmouth.edu</a>) &nbsp;|&nbsp; <a href="https://drive.google.com/file/d/1-xh_tj5flm_A8QytNxdr-2EYGOLHJQ3-/view" target="_blank" rel="noopener">Full IRB consent document</a></p>
+
+        <div class="consent-box">
+            <h2>Consent</h2>
+            <div class="checkbox-row">
+                <input type="checkbox" id="consent-check" aria-describedby="consent-error">
+                <label for="consent-check">I have reviewed the <a href="https://drive.google.com/file/d/1-xh_tj5flm_A8QytNxdr-2EYGOLHJQ3-/view" target="_blank" rel="noopener">full consent document</a> and voluntarily agree to participate in this research study.</label>
+            </div>
+        </div>
+
+        <button class="btn" id="consent-btn" disabled>Continue</button>
+        <div class="error-msg" id="consent-error" role="alert"></div>
+    </div>
+
+    <div class="container success" id="success-screen" role="status" aria-live="polite" tabindex="-1">
+        <div class="checkmark">&#10003;</div>
+        <h2>Thank you!</h2>
+        <p>Your consent has been recorded. Redirecting to feedback page...</p>
+    </div>
+
+    <script>
+        const APPS_SCRIPT_URL = 'YOUR_APPS_SCRIPT_URL_HERE';
+
+        function redirectToFeedback() {
+            setTimeout(function() {
+                window.location.replace('feedback.html');
+            }, 1500);
+        }
+
+        const checkbox = document.getElementById('consent-check');
+        const btn = document.getElementById('consent-btn');
+
+        checkbox.addEventListener('change', function() {
+            btn.disabled = !this.checked;
+        });
+
+        btn.addEventListener('click', async function() {
+            btn.disabled = true;
+            btn.textContent = 'Submitting...';
+            const errorEl = document.getElementById('consent-error');
+            errorEl.style.display = 'none';
+            errorEl.classList.remove('preview');
+
+            const data = {
+                type: 'consent',
+                timestamp: new Date().toISOString(),
+                consent: 'yes'
+            };
+
+            const isPlaceholderUrl = APPS_SCRIPT_URL === 'YOUR_APPS_SCRIPT_URL_HERE';
+            if (isPlaceholderUrl) {
+                document.getElementById('consent-form').style.display = 'none';
+                const success = document.getElementById('success-screen');
+                success.style.display = 'block';
+                success.focus();
+                redirectToFeedback();
+                return;
+            }
+
+            try {
+                const resp = await fetch(APPS_SCRIPT_URL, {
+                    method: 'POST',
+                    redirect: 'follow',
+                    headers: { 'Content-Type': 'text/plain' },
+                    body: JSON.stringify(data)
+                });
+                const result = await resp.json();
+                if (result.status !== 'ok') throw new Error(result.message || 'Server error');
+
+                document.getElementById('consent-form').style.display = 'none';
+                const success = document.getElementById('success-screen');
+                success.style.display = 'block';
+                success.focus();
+                redirectToFeedback();
+            } catch (err) {
+                if (window.location.protocol === 'file:') {
+                    errorEl.textContent = 'Submission unavailable in preview mode.';
+                    errorEl.classList.add('preview');
+                } else {
+                    errorEl.textContent = 'Something went wrong. Please try again.';
+                }
+                errorEl.style.display = 'block';
+                btn.disabled = false;
+                btn.textContent = 'Continue';
+            }
+        });
+    </script>
+</body>
+</html>
