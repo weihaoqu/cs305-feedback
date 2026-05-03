@@ -3,20 +3,44 @@
 //
 // Setup:
 // 1. Create a new Google Sheet
-// 2. Create two tabs: "Consent" and "Feedback"
-// 3. In "Consent" tab, add header in A1: Timestamp
-// 4. In "Feedback" tab, add headers in row 1:
-//    Timestamp | Group | Pre Rating | Post Rating | Learning | Accuracy | Usability | Comments
-// 5. Go to Extensions > Apps Script
-// 6. Paste this entire file
-// 7. Click Deploy > New deployment
-// 8. Type: Web app
-// 9. Execute as: Me
-// 10. Who has access: Anyone
-// 11. Click Deploy, copy the URL
-// 12. Paste the URL into index.html and feedback.html
+// 2. Go to Extensions > Apps Script
+// 3. Paste this entire file
+// 4. Run setupSheets() once (click the play button or Run > setupSheets)
+// 5. Click Deploy > New deployment
+// 6. Type: Web app
+// 7. Execute as: Me
+// 8. Who has access: Anyone
+// 9. Click Deploy, copy the URL
+// 10. Paste the URL into index.html and feedback.html
 //     (replace YOUR_APPS_SCRIPT_URL_HERE)
 // =============================================================
+
+function setupSheets() {
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+
+  // Create or get Consent tab
+  var consent = ss.getSheetByName('Consent');
+  if (!consent) {
+    consent = ss.insertSheet('Consent');
+  }
+  consent.getRange('A1').setValue('Timestamp');
+  consent.getRange('A1').setFontWeight('bold');
+
+  // Create or get Feedback tab
+  var feedback = ss.getSheetByName('Feedback');
+  if (!feedback) {
+    feedback = ss.insertSheet('Feedback');
+  }
+  var headers = ['Timestamp', 'Group', 'Pre Rating', 'Post Rating', 'Learning', 'Accuracy', 'Usability', 'Comments'];
+  feedback.getRange(1, 1, 1, headers.length).setValues([headers]);
+  feedback.getRange(1, 1, 1, headers.length).setFontWeight('bold');
+
+  // Delete default "Sheet1" if it exists and is empty
+  var sheet1 = ss.getSheetByName('Sheet1');
+  if (sheet1 && sheet1.getLastRow() === 0) {
+    ss.deleteSheet(sheet1);
+  }
+}
 
 function doPost(e) {
   var lock = LockService.getScriptLock();
