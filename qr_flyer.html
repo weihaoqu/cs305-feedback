@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CS305 Demo Day — QR Codes</title>
+    <style>
+        @media print {
+            body { margin: 0; padding: 0; }
+            .no-print { display: none !important; }
+            .page { page-break-after: always; }
+            .page:last-child { page-break-after: auto; }
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+            background: #f5f5f7;
+            color: #1d1d1f;
+        }
+        .config-bar {
+            background: #fff;
+            padding: 16px 24px;
+            border-bottom: 1px solid #e5e5e7;
+            text-align: center;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+        .config-bar label {
+            font-size: 14px;
+            font-weight: 600;
+            margin-right: 8px;
+        }
+        .config-bar input {
+            padding: 8px 12px;
+            border: 2px solid #e5e5e7;
+            border-radius: 8px;
+            font-size: 14px;
+            width: 400px;
+        }
+        .config-bar button {
+            padding: 8px 20px;
+            background: #007aff;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-left: 8px;
+        }
+        .config-bar .hint {
+            display: block;
+            font-size: 12px;
+            color: #86868b;
+            margin-top: 6px;
+        }
+        .print-btn {
+            padding: 8px 20px;
+            background: #34c759;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-left: 8px;
+        }
+        /* Flyer layout: 5 rows x 3 columns per page */
+        .page {
+            width: 8.5in;
+            min-height: 11in;
+            margin: 20px auto;
+            background: #fff;
+            padding: 0.4in 0.5in;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+        }
+        .page-header {
+            text-align: center;
+            margin-bottom: 0.2in;
+            padding-bottom: 0.15in;
+            border-bottom: 2px solid #1d1d1f;
+        }
+        .page-header h1 {
+            font-size: 20px;
+            margin-bottom: 2px;
+        }
+        .page-header p {
+            font-size: 12px;
+            color: #86868b;
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 0.15in;
+        }
+        .qr-card {
+            border: 1.5px solid #e5e5e7;
+            border-radius: 8px;
+            padding: 0.12in;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .qr-card .group-label {
+            font-size: 14px;
+            font-weight: 700;
+            margin-bottom: 4px;
+            color: #1d1d1f;
+        }
+        .qr-card canvas {
+            margin: 0 auto;
+        }
+        .qr-card .scan-text {
+            font-size: 9px;
+            color: #86868b;
+            margin-top: 4px;
+        }
+        .footer-note {
+            text-align: center;
+            font-size: 11px;
+            color: #86868b;
+            margin-top: 0.15in;
+            padding-top: 0.1in;
+            border-top: 1px solid #e5e5e7;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="config-bar no-print">
+        <label for="base-url">Base URL:</label>
+        <input type="text" id="base-url" placeholder="https://yourusername.github.io/cs305-feedback/feedback.html">
+        <button onclick="generateQR()">Generate QR Codes</button>
+        <button class="print-btn" onclick="window.print()">Print Flyer</button>
+        <span class="hint">Enter the URL where feedback.html is hosted. QR codes will append ?group=1 through ?group=15</span>
+    </div>
+
+    <!-- Page 1: Groups 1-15 -->
+    <div class="page" id="page1">
+        <div class="page-header">
+            <h1>CS305 Demo Day — Scan to Give Feedback</h1>
+            <p>Scan the QR code for the group presenting, then fill out the short feedback form on your phone.</p>
+        </div>
+        <div class="grid" id="qr-grid"></div>
+        <div class="footer-note">
+            After trying each group's game/app, scan their QR code and submit your feedback (about 1–2 min).
+        </div>
+    </div>
+
+    <!-- QRCode.js library (MIT license) -->
+    <script>
+    // Minimal QR code generator — canvas-based
+    // Using CDN for qrcode library
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+
+    <script>
+        function generateQR() {
+            const baseUrl = document.getElementById('base-url').value.trim();
+            if (!baseUrl) {
+                alert('Please enter the base URL for feedback.html');
+                return;
+            }
+
+            const grid = document.getElementById('qr-grid');
+            grid.innerHTML = '';
+
+            for (let i = 1; i <= 15; i++) {
+                const separator = baseUrl.includes('?') ? '&' : '?';
+                const url = baseUrl + separator + 'group=' + i;
+
+                const card = document.createElement('div');
+                card.className = 'qr-card';
+
+                const label = document.createElement('div');
+                label.className = 'group-label';
+                label.textContent = 'Group ' + i;
+
+                const canvas = document.createElement('canvas');
+
+                const scanText = document.createElement('div');
+                scanText.className = 'scan-text';
+                scanText.textContent = 'Scan to give feedback';
+
+                card.appendChild(label);
+                card.appendChild(canvas);
+                card.appendChild(scanText);
+                grid.appendChild(card);
+
+                QRCode.toCanvas(canvas, url, {
+                    width: 120,
+                    margin: 1,
+                    color: { dark: '#1d1d1f', light: '#ffffff' }
+                });
+            }
+        }
+
+        // Auto-generate if URL is already filled
+        window.addEventListener('load', function() {
+            const urlInput = document.getElementById('base-url');
+            if (urlInput.value) generateQR();
+        });
+    </script>
+</body>
+</html>
